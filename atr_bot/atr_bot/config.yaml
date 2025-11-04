@@ -1,0 +1,45 @@
+# Default configuration for the ATR bot
+exchange:
+  id: coinbase            # e.g., binance, kraken, coinbase, bybit, okx
+  order_type: market     # market or limit
+  limit_slippage_bps: 10 # only used if order_type = limit (10 bps = 0.10%)
+  allow_derivatives: false
+
+market:
+  symbol: POND/USDC       # must exist on your chosen exchange (spot only unless derivatives enabled)
+  quote: USDC
+  base: POND
+  min_order_notional_warn: true  # warn and skip if below exchange min cost
+  min_order_amount_warn: true    # warn and skip if below exchange min qty
+
+coingecko:
+  coin_id: marlin       # e.g., bitcoin, ethereum
+  vs_currency: usd
+  poll_interval_seconds: 300
+  atr_window: 14         # ATR lookback
+  ohlc_days: 30          # try daily OHLC first; fallback to minute bars TR
+  timeout_seconds: 15
+
+strategy:
+  k: 0.5                 # multiple of ATR for entries/exits
+  stop_loss_atr: 1.0     # optional stop at 1.0 * ATR below entry (if enabled)
+  stop_enabled: true
+  taker_fee_pct: 0.1     # per side (0.1%)
+  state_file: state.json
+
+sizing:
+  mode: notional         # 'notional' or 'quantity'
+  notional: 10          # used if mode == notional
+  quantity: 0.005        # used if mode == quantity
+  round_to_step: true    # round to exchange step sizes
+
+risk:
+  max_trades_per_day: 10
+  cooldown_seconds: 60
+  max_daily_loss_pct: 3.0   # kill-switch vs. start_equity below
+  start_equity: 1000.0
+
+runtime:
+  paper: false            # default to paper trading; override with --paper flag
+  once: false            # run one loop and exit (for testing); override with --once
+  log_level: INFO        # DEBUG, INFO, WARNING, ERROR
